@@ -1,0 +1,15 @@
+/home/bracket/Documents/GitHub/Snake-Game/Snake-Game/bin/Debug/net9.0/Snake-Game
+/home/bracket/Documents/GitHub/Snake-Game/Snake-Game/bin/Debug/net9.0/Snake-Game.deps.json
+/home/bracket/Documents/GitHub/Snake-Game/Snake-Game/bin/Debug/net9.0/Snake-Game.runtimeconfig.json
+/home/bracket/Documents/GitHub/Snake-Game/Snake-Game/bin/Debug/net9.0/Snake-Game.dll
+/home/bracket/Documents/GitHub/Snake-Game/Snake-Game/bin/Debug/net9.0/Snake-Game.pdb
+/home/bracket/Documents/GitHub/Snake-Game/Snake-Game/obj/Debug/net9.0/Snake-Game.GeneratedMSBuildEditorConfig.editorconfig
+/home/bracket/Documents/GitHub/Snake-Game/Snake-Game/obj/Debug/net9.0/Snake-Game.AssemblyInfoInputs.cache
+/home/bracket/Documents/GitHub/Snake-Game/Snake-Game/obj/Debug/net9.0/Snake-Game.AssemblyInfo.cs
+/home/bracket/Documents/GitHub/Snake-Game/Snake-Game/obj/Debug/net9.0/Snake-Game.csproj.CoreCompileInputs.cache
+/home/bracket/Documents/GitHub/Snake-Game/Snake-Game/obj/Debug/net9.0/Snake-Game.sourcelink.json
+/home/bracket/Documents/GitHub/Snake-Game/Snake-Game/obj/Debug/net9.0/Snake-Game.dll
+/home/bracket/Documents/GitHub/Snake-Game/Snake-Game/obj/Debug/net9.0/refint/Snake-Game.dll
+/home/bracket/Documents/GitHub/Snake-Game/Snake-Game/obj/Debug/net9.0/Snake-Game.pdb
+/home/bracket/Documents/GitHub/Snake-Game/Snake-Game/obj/Debug/net9.0/Snake-Game.genruntimeconfig.cache
+/home/bracket/Documents/GitHub/Snake-Game/Snake-Game/obj/Debug/net9.0/ref/Snake-Game.dll
