@@ -1,27 +1,32 @@
-namespace Snake_Game.Engine;
+using SnakeGame.Engine;
 
-public class Game
+namespace Snake_Game.Engine
 {
-    public void Run()
+
+    public class Game
     {
-        const float FixedDeltaTime = 0.16f;
-        float Time = 0;
-        Renderer MainRenderer = new Renderer(40, 20);
-        while (true)
+        public void Run()
         {
-            if (Console.KeyAvailable)
+            const float FixedDeltaTime = 0.16f;
+            float Time = 0;
+            Renderer MainRenderer = new Renderer(20, 20);
+            while (true)
             {
-                ConsoleKeyInfo KeyInfo = Console.ReadKey(intercept: true);
-                if (KeyInfo.Key == ConsoleKey.W)
+                if (Console.KeyAvailable)
                 {
-                    //Go up
+                    ConsoleKeyInfo KeyInfo = Console.ReadKey(intercept: true);
+                    if (KeyInfo.Key == ConsoleKey.W)
+                    {
+                        //Go up
+                    }
                 }
+
+                MainRenderer.Clear(0, 0, 0);
+                MainRenderer.SetPixel(10, 10 + (int)(float.Sin(Time) * 3), 255, 255, 255);
+                MainRenderer.Render();
+                Time += FixedDeltaTime;
+                Thread.Sleep(16);
             }
-            MainRenderer.Clear(0, 0, 0);
-            MainRenderer.SetPixel(10, 10 + (int)(float.Sin(Time) * 3), 255, 255, 255);
-            MainRenderer.Render();
-            Time += FixedDeltaTime;
-            Thread.Sleep(16);
         }
     }
 }

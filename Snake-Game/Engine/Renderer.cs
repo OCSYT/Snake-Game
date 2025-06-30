@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 
-namespace Snake_Game.Engine
+namespace SnakeGame.Engine
 {
     public class Pixel
     {
@@ -9,28 +9,20 @@ namespace Snake_Game.Engine
         public byte G { get; }
         public byte B { get; }
 
-        public Pixel(byte r, byte g, byte b)
+        public Pixel(byte R, byte G, byte B)
         {
-            R = r;
-            G = g;
-            B = b;
-        }
-
-        public bool Equals(Pixel other)
-        {
-            if (other == null) return false;
-            return R == other.R && G == other.G && B == other.B;
+            this.R = R;
+            this.G = G;
+            this.B = B;
         }
     }
 
     public class Renderer
     {
-        private int Width { get; }
-        private int Height { get; }
-
-        private Pixel[,] FrontBuffer { get; }
-        private Pixel[,] BackBuffer { get; }
-
+        public int Width { get; }
+        public int Height { get; }
+        public Pixel[,] FrontBuffer { get; }
+        public Pixel[,] BackBuffer { get; }
         private readonly StringBuilder OutputBuilder = new();
 
         public Renderer(int width, int height)
@@ -39,55 +31,48 @@ namespace Snake_Game.Engine
             Height = height;
             FrontBuffer = new Pixel[Height, Width];
             BackBuffer = new Pixel[Height, Width];
-
             Console.OutputEncoding = Encoding.UTF8;
             Console.CursorVisible = false;
             Console.Clear();
         }
 
-        public void SetPixel(int x, int y, byte r, byte g, byte b)
+        public void SetPixel(int X, int Y, byte R, byte G, byte B)
         {
-            if (x >= 0 && x < Width && y >= 0 && y < Height)
+            if (X >= 0 && X < Width && Y >= 0 && Y < Height)
             {
-                BackBuffer[y, x] = new Pixel(r, g, b);
+                BackBuffer[Y, X] = new Pixel(R, G, B);
             }
         }
 
-        public void Clear(byte r = 0, byte g = 0, byte b = 0)
+        public void Clear(byte R = 0, byte G = 0, byte B = 0)
         {
-            var ClearPixel = new Pixel(r, g, b);
-            for (int y = 0; y < Height; y++)
+            var ClearPixel = new Pixel(R, G, B);
+            for (int Y = 0; Y < Height; Y++)
             {
-                for (int x = 0; x < Width; x++)
+                for (int X = 0; X < Width; X++)
                 {
-                    BackBuffer[y, x] = ClearPixel;
+                    BackBuffer[Y, X] = ClearPixel;
                 }
             }
         }
+
 
         public void Render()
         {
             OutputBuilder.Clear();
             OutputBuilder.Append("\u001b[H");
-
-            for (int y = 0; y < Height; y++)
+            for (int Y = 0; Y < Height; Y++)
             {
-                for (int x = 0; x < Width; x++)
+                OutputBuilder.Append($"\u001b[{Y + 1};1H");
+                for (int X = 0; X < Width; X++)
                 {
-                    Pixel Current = BackBuffer[y, x] ?? new Pixel(0, 0, 0);
-                    Pixel Previous = FrontBuffer[y, x];
-
-                    if (Previous == null || !Current.Equals(Previous))
-                    {
-                        OutputBuilder.Append($"\u001b[{y + 1};{x + 1}H"); // Move cursor
-                        OutputBuilder.Append($"\u001b[38;2;{Current.R};{Current.G};{Current.B}m█");
-                        FrontBuffer[y, x] = Current;
-                    }
+                    var Pixel = BackBuffer[Y, X] ?? new Pixel(0, 0, 0);
+                    OutputBuilder.Append($"\u001b[38;2;{Pixel.R};{Pixel.G};{Pixel.B}m██ ");
+                    FrontBuffer[Y, X] = Pixel;
                 }
             }
-
             OutputBuilder.Append("\u001b[0m");
-            Console.Write(OutputBuilder.ToString());
+            Console.Write(OutputBuilder);
         }
     }
 }
