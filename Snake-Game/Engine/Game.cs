@@ -6,87 +6,182 @@ namespace Snake_Game.Engine
 {
     public class Game
     {
-        private float Time = 0;
-        private Renderer MainRenderer = new Renderer(20, 20);
-        private Vector2 Position = Vector2.Zero;
-        private Vector2 Movement = Vector2.UnitY;
-        private List<Vector2> ApplePositions = new List<Vector2>();
-        private int Score = 0;
+        // statistics
+        private float _time = 0;
+        private int _score = 0;
+        
+        // game setup
+        private Renderer _mainRenderer = new Renderer(20, 20);
+        private Vector2 _position = Vector2.Zero;
+        private Vector2 _movement = -Vector2.UnitY;
+        
+        // apple setup
+        private List<Vector2> _applePositions = new List<Vector2>();
         private void MakeApple()
         {
-            Random Random = new Random();
-            Vector2 ApplePosition = new Vector2(Random.Next(MainRenderer.Width), Random.Next(MainRenderer.Height));
-            ApplePositions.Add(ApplePosition);
+            // add apple to random square
+            Random random = new Random();
+            Vector2 applePosition = new Vector2(random.Next(_mainRenderer.Width), random.Next(_mainRenderer.Height));
+            _applePositions.Add(applePosition);
+        }
+        
+        // snake setup
+        private List<Vector2> _snakePositions = new List<Vector2>();
+        
+        private void UpdatePosition()
+        {
+            // checks if snake's head is not equal to desired destination,
+            // adds positions as new snake head.
+            // default/in beginning = true
+            if (
+                _snakePositions.Count == 0 
+                || (int)MathF.Floor(_snakePositions[0].X) != (int)MathF.Floor(_position.X)
+                || (int)MathF.Floor(_snakePositions[0].Y) != (int)MathF.Floor(_position.Y)
+            )
+            {
+                _snakePositions.Insert(0, _position);
+            }
+            
+            // removes last item in the list while it's longer than 1-based score (length val)
+            while (_snakePositions.Count > _score + 1)
+            {
+                _snakePositions.RemoveAt(_snakePositions.Count - 1);
+            }
         }
 
+        private void RenderPositions()
+        {
+            // renders every snake square
+            for (int i = 0; i < _snakePositions.Count; i++)
+            {
+                Vector2 snakePosition = _snakePositions[i];
+
+                // colour creation — clamps to prevent overflow
+                byte red = (byte)Math.Clamp(0 + (i * 10), 0, 255);
+                byte green = 0;
+                byte blue = (byte)Math.Clamp(255 - (i * 10), 0, 255);
+
+                // render square
+                _mainRenderer.SetPixel((int)snakePosition.X, (int)snakePosition.Y, red, green, blue);
+            }
+        }
+
+
+        private void Die()
+        {
+            Console.WriteLine("You Died!");
+        }
+
+        // game
         public void Run()
         {
-            Position = new Vector2(MainRenderer.Width / 2, MainRenderer.Height / 2); 
+            // init game && apple setup
+            _position = new Vector2(_mainRenderer.Width / 2, _mainRenderer.Height / 2); 
             MakeApple();
             
 
-            Stopwatch Stopwatch = new Stopwatch();
-            Stopwatch.Start();
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
 
             while (true)
             {
-                float DeltaTime = (float)Stopwatch.Elapsed.TotalSeconds;
-                Stopwatch.Restart();
+                float deltaTime = (float)stopwatch.Elapsed.TotalSeconds;
+                stopwatch.Restart();
 
-                // Stats
+                // display statistics
                 Console.WriteLine("\n");
-                Console.WriteLine($"FPS: {float.Floor(1/DeltaTime)}");
+                Console.WriteLine($"FPS: {float.Floor(1/deltaTime)}");
                 Console.WriteLine("\n");
-                Console.WriteLine($"Score: {Score}");
-                MainRenderer.Clear(0, 0, 0);
+                Console.WriteLine($"Score: {_score}");
+                _mainRenderer.Clear(0, 0, 0);
 
-                // Movement Keypresses
+                // movement keypresses
+                Vector2 prevMove = _movement;
                 if (Console.KeyAvailable)
                 {
-                    ConsoleKeyInfo KeyInfo = Console.ReadKey(intercept: true);
-                    switch (KeyInfo.Key)
+                    ConsoleKeyInfo keyInfo = Console.ReadKey(intercept: true);
+                    switch (keyInfo.Key)
                     {
                         case ConsoleKey.W:
-                            Movement = -Vector2.UnitY;
+                        case ConsoleKey.UpArrow:
+                            _movement = -Vector2.UnitY;
                             break;
                         case ConsoleKey.A:
-                            Movement = -Vector2.UnitX;
+                        case ConsoleKey.LeftArrow:
+                            _movement = -Vector2.UnitX;
                             break;
                         case ConsoleKey.S:
-                            Movement = Vector2.UnitY;
+                        case ConsoleKey.DownArrow:
+                            _movement = Vector2.UnitY;
                             break;
                         case ConsoleKey.D:
-                            Movement = Vector2.UnitX;
+                        case ConsoleKey.RightArrow:
+                            _movement = Vector2.UnitX;
                             break;
                     }
                 }
 
-                Position += Movement * DeltaTime * 10f;
-
-                foreach (Vector2 ApplePosition in ApplePositions.ToList())
+                // prevents going directly backwards
+                if (Vector2.Dot(_movement, prevMove) == -1 
+                    && _score != 0)
                 {
-                    int X = (int)MathF.Floor(ApplePosition.X);
-                    int Y = (int)MathF.Floor(ApplePosition.Y);
+                    _movement = -_movement;
+                }
 
-                    MainRenderer.SetPixel(X, Y, 255, 0, 0);
+                // update position with new movement
+                _position += _movement * deltaTime * 10f;
+
+                //apple handling
+                foreach (Vector2 applePosition in _applePositions.ToList())
+                {
+                    // render each apple
+                    int x = (int)MathF.Floor(applePosition.X);
+                    int y = (int)MathF.Floor(applePosition.Y);
+                    _mainRenderer.SetPixel(x, y, 255, 0, 0);
 
                     // if contact apple
-                    if (X == (int)MathF.Floor(Position.X) && Y == (int)MathF.Floor(Position.Y))
+                    if (x == (int)MathF.Floor(_position.X) && y == (int)MathF.Floor(_position.Y))
                     {
-                        ApplePositions.Remove(ApplePosition);
-                        Score++;
+                        _applePositions.Remove(applePosition);
+                        // adds to score, ergo adds to snake length
+                        _score++;
                         MakeApple();
                     }
                 }
 
-              
+                
+                int headX = (int)MathF.Floor(_position.X);
+                int headY = (int)MathF.Floor(_position.Y);
+                
+                if (_mainRenderer.Height == headY || _mainRenderer.Width == headX
+                    || headY == -1  || headX == -1)
+                {
+                    Die();
+                    // exit game loop
+                    return;
+                }
+                
+                for (int i = 1; i < _snakePositions.Count; i++)
+                {
+                    int bodyX = (int)MathF.Floor(_snakePositions[i].X);
+                    int bodyY = (int)MathF.Floor(_snakePositions[i].Y);
 
-                Position.X = Math.Clamp(Position.X, 0, MainRenderer.Width - 1);
-                Position.Y = Math.Clamp(Position.Y, 0, MainRenderer.Height - 1);
+                    if (bodyX == headX && bodyY == headY)
+                    {
+                        Die();
+                        // exit game loop
+                        return; 
+                    }
+                }
 
-                MainRenderer.SetPixel((int)Position.X, (int)Position.Y, 0, 255, 0);
-                MainRenderer.Render();
-                Time += DeltaTime;
+                
+                
+                UpdatePosition();
+                RenderPositions();
+                
+                _mainRenderer.Render();
+                
+                _time += deltaTime;
             }
         }
     }
