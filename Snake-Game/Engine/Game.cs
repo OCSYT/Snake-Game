@@ -85,6 +85,8 @@ namespace Snake_Game.Engine
 
             while (true)
             {
+                Task.Delay(16).Wait(); //Wait 16ms to limit framerate to 60fps
+                
                 float deltaTime = (float)stopwatch.Elapsed.TotalSeconds;
                 stopwatch.Restart();
 

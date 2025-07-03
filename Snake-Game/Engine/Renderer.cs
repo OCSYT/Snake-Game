@@ -21,16 +21,14 @@ namespace SnakeGame.Engine
     {
         public int Width { get; }
         public int Height { get; }
-        public Pixel[,] FrontBuffer { get; }
-        public Pixel[,] BackBuffer { get; }
+        public Pixel[,] Buffer { get; }
         private readonly StringBuilder OutputBuilder = new();
 
         public Renderer(int width, int height)
         {
             Width = width;
             Height = height;
-            FrontBuffer = new Pixel[Height, Width];
-            BackBuffer = new Pixel[Height, Width];
+            Buffer = new Pixel[Height, Width];
             Console.OutputEncoding = Encoding.UTF8;
             Console.CursorVisible = false;
             Console.Clear();
@@ -40,7 +38,7 @@ namespace SnakeGame.Engine
         {
             if (X >= 0 && X < Width && Y >= 0 && Y < Height)
             {
-                BackBuffer[Y, X] = new Pixel(R, G, B);
+                Buffer[Y, X] = new Pixel(R, G, B);
             }
         }
 
@@ -51,11 +49,10 @@ namespace SnakeGame.Engine
             {
                 for (int X = 0; X < Width; X++)
                 {
-                    BackBuffer[Y, X] = ClearPixel;
+                    Buffer[Y, X] = ClearPixel;
                 }
             }
         }
-
 
         public void Render()
         {
@@ -66,9 +63,8 @@ namespace SnakeGame.Engine
                 OutputBuilder.Append($"\u001b[{Y + 1};1H");
                 for (int X = 0; X < Width; X++)
                 {
-                    var Pixel = BackBuffer[Y, X] ?? new Pixel(0, 0, 0);
+                    var Pixel = Buffer[Y, X] ?? new Pixel(0, 0, 0);
                     OutputBuilder.Append($"\u001b[38;2;{Pixel.R};{Pixel.G};{Pixel.B}m██ ");
-                    FrontBuffer[Y, X] = Pixel;
                 }
             }
             OutputBuilder.Append("\u001b[0m");
